@@ -10,13 +10,23 @@ const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 // La carta robada se elige SIEMPRE de este catálogo cerrado, así que se lo damos a
 // Gemini: solo tiene que reconocer cuál de estas películas se está mimando, no
 // adivinar a ciegas entre todo el cine mundial.
-const MOVIE_LIST = MOVIES.map((m) => `- ${m.title}`).join("\n");
+//
+// Además incluimos para CADA película los mismos gestos que se le sugieren al
+// jugador como pistas. Damos las pistas de TODAS las películas (no solo la
+// correcta), así que esto no filtra la respuesta: es un "diccionario de gestos"
+// que ayuda a Gemini a mapear lo que ve a un título, pero sigue teniendo que
+// reconocer qué gestos hizo realmente el jugador.
+const MOVIE_LIST = MOVIES.map(
+  (m) => `- ${m.title} → gestos típicos: ${m.hints.join("; ")}`
+).join("\n");
 
 const PROMPT = `Estás jugando a Charades (mímica) y formas parte del equipo del jugador.
 En este vídeo, una persona actúa SIN HABLAR para representar el título de una PELÍCULA.
 Observa con atención sus gestos, objetos, acciones y el número de palabras que marca con los dedos.
 
-La película es OBLIGATORIAMENTE una de esta lista (no propongas ningún título que no esté aquí):
+La película es OBLIGATORIAMENTE una de esta lista. Para cada título tienes los gestos
+típicos que un jugador usaría para representarla; úsalos para emparejar lo que observas
+en el vídeo con el título más probable (no propongas ningún título que no esté aquí):
 ${MOVIE_LIST}
 
 Devuelve tus 3 mejores candidatos DE ESA LISTA, copiando el título EXACTAMENTE como aparece,

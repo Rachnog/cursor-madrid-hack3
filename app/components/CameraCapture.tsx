@@ -45,6 +45,7 @@ interface CameraCaptureProps {
 export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [count, setCount] = useState(0); // segundos restantes de la fase actual
+  const [showHints, setShowHints] = useState(false); // panel de pistas de actuación
   const [clipUrl, setClipUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false); // cámara lista (stream activo)
@@ -211,6 +212,26 @@ export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps
           <p className="role-hint">
             Protagonista: Pedro Sánchez · {movie.sentiment === "positive" ? "papel de buenazo 😇" : "papelón de villano 😈"}
           </p>
+
+          {movie.hints.length > 0 && (
+            <div className="hints">
+              <button
+                type="button"
+                className="hints-toggle"
+                aria-expanded={showHints}
+                onClick={() => setShowHints((v) => !v)}
+              >
+                💡 {showHints ? "Ocultar pistas" : "¿No sabes cómo actuarla? Pistas"}
+              </button>
+              {showHints && (
+                <ul className="hints-list">
+                  {movie.hints.map((hint, i) => (
+                    <li key={i}>{hint}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       )}
 

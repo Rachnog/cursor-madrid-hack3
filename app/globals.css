@@ -247,6 +247,51 @@ body::after {
   color: var(--paper-dim);
 }
 
+/* Pistas de actuación (mímica) — plegable */
+.hints {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(185, 151, 91, 0.3);
+}
+.hints-toggle {
+  background: transparent;
+  border: 1px solid var(--sepia);
+  color: var(--gold-bright);
+  font-family: var(--font-type);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  transition: all 0.2s ease;
+}
+.hints-toggle:hover {
+  border-color: var(--gold);
+  background: rgba(217, 178, 90, 0.12);
+}
+.hints-list {
+  list-style: none;
+  margin: 16px auto 0;
+  max-width: 420px;
+  text-align: left;
+  display: grid;
+  gap: 8px;
+}
+.hints-list li {
+  font-family: var(--font-card);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--paper);
+  padding-left: 24px;
+  position: relative;
+}
+.hints-list li::before {
+  content: "🎬";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-size: 12px;
+}
+
 /* ============================================================
    Escenario / Fotograma de cámara con perforaciones
    ============================================================ */
