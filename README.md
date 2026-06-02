@@ -112,13 +112,21 @@ git push -u origin feat/mi-componente
 
 ## 🚀 Puesta en marcha
 
-> Pendiente de scaffold del proyecto. Cuando exista, esta sección documentará:
->
-> ```bash
-> # instalar dependencias
-> # configurar variables de entorno (GEMINI_API_KEY, ...)
-> # arrancar en local
-> ```
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar la clave de Gemini
+cp .env.example .env
+#   y rellena GEMINI_API_KEY (se obtiene en https://aistudio.google.com/apikey)
+
+# 3. Arrancar en local
+npm run dev
+#   abre http://localhost:3000 en Chrome y da permiso de cámara
+```
+
+El flujo actual: cuenta atrás 5s → graba 10s → el clip se envía a `/api/guess`
+(Gemini procesa el vídeo) → la IA devuelve sus 3 mejores apuestas de película.
 
 ---
 
