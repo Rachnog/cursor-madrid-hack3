@@ -203,6 +203,51 @@ body::after {
 }
 
 /* ============================================================
+   Baraja de cartas — marco que da altura al abanico (CardDeck)
+   ============================================================ */
+.deck-frame {
+  position: relative;
+  width: 100%;
+  height: min(70vh, 580px);
+}
+
+/* ============================================================
+   Carta robada — el papel que toca interpretar
+   ============================================================ */
+.role {
+  text-align: center;
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border: 1px solid var(--gold);
+  outline: 1px solid var(--sepia);
+  outline-offset: 4px;
+  background: radial-gradient(120% 120% at 50% 0%, #211a12 0%, #0e0a06 100%);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.5);
+}
+.role-kicker {
+  font-family: var(--font-type);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--sepia);
+  padding-left: 0.32em;
+}
+.role-title {
+  font-family: var(--font-deco);
+  font-size: clamp(26px, 6vw, 40px);
+  line-height: 1.05;
+  color: var(--gold-bright);
+  text-shadow: 0 1px 0 #5e441a, 0 0 24px rgba(217, 178, 90, 0.3);
+  margin: 10px 0 8px;
+}
+.role-hint {
+  font-family: var(--font-card);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--paper-dim);
+}
+
+/* ============================================================
    Escenario / Fotograma de cámara con perforaciones
    ============================================================ */
 .stage {

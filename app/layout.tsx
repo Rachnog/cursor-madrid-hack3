@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Charades 🎭",
-  description: "Charades cooperativo con IA — captura de cámara",
+  title: "Moncloa Charades 🎭",
+  description: "Mímica de Estado: roba tu papel, actúa y deja que la IA adivine la película.",
 };
 
 export default function RootLayout({

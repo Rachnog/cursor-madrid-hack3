@@ -30,13 +30,15 @@ function shuffledOrder(): number[] {
 export interface CardDeckProps {
   /** Called with the drawn movie when the user reveals a card. */
   onPick?: (movie: Movie) => void;
+  /** Called when the player confirms the revealed card and steps on stage. */
+  onContinue?: (movie: Movie) => void;
 }
 
 /**
  * A responsive, bottom-anchored card-fan. The user sees the backs of every
  * card, taps one, and it flips to reveal a movie. Pure React + CSS (no deps).
  */
-export default function CardDeck({ onPick }: CardDeckProps) {
+export default function CardDeck({ onPick, onContinue }: CardDeckProps) {
   const [phase, setPhase] = useState<Phase>("fan");
   const [selected, setSelected] = useState<number | null>(null);
   const [deck, setDeck] = useState(0);
@@ -83,12 +85,14 @@ export default function CardDeck({ onPick }: CardDeckProps) {
 
   return (
     <div className={styles.root} ref={rootRef}>
-      <h2 className={styles.title}>Pick a card</h2>
+      <h2 className={styles.title}>El gran casting</h2>
       <p className={styles.subtitle}>
         {phase === "fan"
-          ? "Tap any card to draw your movie"
+          ? "Roba una carta y descubre qué papelón te toca bordar"
           : drawn
-          ? `${drawn.title} · ${drawn.sentiment === "positive" ? "😊 feel-good" : "😈 crime"}`
+          ? `«${drawn.title}» · ${
+              drawn.sentiment === "positive" ? "😇 papel de buenazo" : "😈 papelón de villano"
+            }`
           : ""}
       </p>
 
@@ -125,10 +129,15 @@ export default function CardDeck({ onPick }: CardDeckProps) {
       </div>
 
       <div className={styles.controls}>
-        {phase === "revealed" && (
-          <button className={styles.reset} onClick={reset}>
-            Shuffle &amp; deal again
-          </button>
+        {phase === "revealed" && drawn && (
+          <>
+            <button className={styles.reset} onClick={reset}>
+              Otra carta
+            </button>
+            <button className={styles.go} onClick={() => onContinue?.(drawn)}>
+              ¡A escena! 🎬
+            </button>
+          </>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import CameraCapture from "./components/CameraCapture";
+import GameFlow from "./components/GameFlow";
 
 export default function Home() {
   return (
@@ -9,14 +9,14 @@ export default function Home() {
           <div className="deco-rule">
             <span>★</span>
           </div>
-          <h1 className="title">AI Charades</h1>
+          <h1 className="title">Moncloa Charades</h1>
           <div className="bulbs">
             <i /><i /><i /><i /><i /><i />
           </div>
           <p className="subtitle">Una película muda en un acto</p>
         </header>
 
-        <CameraCapture />
+        <GameFlow />
       </div>
 
       <p className="colophon">Mímica · Cámara · Aplauso</p>

@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { MOVIES } from "../../data/movies";
 
 // Procesado de vídeo con Gemini → se ejecuta en el servidor (la API key no llega al navegador).
 export const runtime = "nodejs";
@@ -6,13 +7,21 @@ export const maxDuration = 30;
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
+// La carta robada se elige SIEMPRE de este catálogo cerrado, así que se lo damos a
+// Gemini: solo tiene que reconocer cuál de estas películas se está mimando, no
+// adivinar a ciegas entre todo el cine mundial.
+const MOVIE_LIST = MOVIES.map((m) => `- ${m.title}`).join("\n");
+
 const PROMPT = `Estás jugando a Charades (mímica) y formas parte del equipo del jugador.
 En este vídeo, una persona actúa SIN HABLAR para representar el título de una PELÍCULA.
 Observa con atención sus gestos, objetos, acciones y el número de palabras que marca con los dedos.
 
-Adivina qué película está intentando representar. Devuelve tus 3 mejores candidatos,
+La película es OBLIGATORIAMENTE una de esta lista (no propongas ningún título que no esté aquí):
+${MOVIE_LIST}
+
+Devuelve tus 3 mejores candidatos DE ESA LISTA, copiando el título EXACTAMENTE como aparece,
 ordenados del MÁS probable al menos probable. Si no estás seguro, propón igualmente
-tus mejores apuestas.`;
+tus 3 mejores apuestas de la lista.`;
 
 export async function POST(req: Request) {
   const apiKey = process.env.GEMINI_API_KEY;

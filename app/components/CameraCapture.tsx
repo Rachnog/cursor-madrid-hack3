@@ -1,9 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { Movie } from "../data/movies";
 
 const PREP_SECONDS = 5; // cuenta atrás de preparación (film leader)
-const RECORD_SECONDS = 10; // duración de la grabación
+const RECORD_SECONDS = 5; // duración de la grabación (clip corto → procesado más rápido)
+
+// Resolución y bitrate reducidos a propósito: el clip pesa mucho menos, así que
+// subir y procesar en Gemini es bastante más rápido (la mímica no necesita HD).
+const CAPTURE_WIDTH = 640;
+const CAPTURE_HEIGHT = 360;
+const VIDEO_BITRATE = 800_000; // ~0.8 Mbps
 
 type Phase = "idle" | "countdown" | "recording" | "done" | "error";
 type AiPhase = "idle" | "loading" | "done" | "error";
@@ -28,11 +35,20 @@ function pickMimeType(): string {
   return "video/webm";
 }
 
-export default function CameraCapture() {
+interface CameraCaptureProps {
+  /** Película que el jugador acaba de robar y debe interpretar. */
+  movie: Movie;
+  /** Vuelve a la baraja para robar otra carta. */
+  onPlayAgain: () => void;
+}
+
+export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [count, setCount] = useState(0); // segundos restantes de la fase actual
   const [clipUrl, setClipUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false); // cámara lista (stream activo)
+  const autoStartedRef = useRef(false); // arranca la cuenta atrás una sola vez
 
   // Estado de la adivinanza de la IA
   const [aiPhase, setAiPhase] = useState<AiPhase>("idle");
@@ -76,7 +92,7 @@ export default function CameraCapture() {
     (async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: { width: { ideal: CAPTURE_WIDTH }, height: { ideal: CAPTURE_HEIGHT } },
           audio: false,
         });
         if (cancelled) {
@@ -87,6 +103,7 @@ export default function CameraCapture() {
         if (liveVideoRef.current) {
           liveVideoRef.current.srcObject = stream;
         }
+        setReady(true);
       } catch (err) {
         setError(
           "No se pudo acceder a la cámara. Revisa los permisos del navegador."
@@ -108,7 +125,10 @@ export default function CameraCapture() {
     if (!stream) return;
 
     chunksRef.current = [];
-    const recorder = new MediaRecorder(stream, { mimeType: pickMimeType() });
+    const recorder = new MediaRecorder(stream, {
+      mimeType: pickMimeType(),
+      videoBitsPerSecond: VIDEO_BITRATE,
+    });
     recorderRef.current = recorder;
 
     recorder.ondataavailable = (e) => {
@@ -165,10 +185,30 @@ export default function CameraCapture() {
     timersRef.current.push(interval);
   }, [startRecording]);
 
+  // En cuanto la cámara está lista, arranca sola la cuenta atrás de preparación:
+  // el jugador ya ha visto su carta, ahora se prepara para actuar.
+  useEffect(() => {
+    if (ready && !autoStartedRef.current && phase === "idle") {
+      autoStartedRef.current = true;
+      startCountdown();
+    }
+  }, [ready, phase, startCountdown]);
+
   const busy = phase === "countdown" || phase === "recording";
 
   return (
     <div>
+      {/* Carta robada: el papel que toca interpretar */}
+      {phase !== "done" && (
+        <div className="role">
+          <p className="role-kicker">Te toca interpretar</p>
+          <p className="role-title">«{movie.title}»</p>
+          <p className="role-hint">
+            Protagonista: Pedro Sánchez · {movie.sentiment === "positive" ? "papel de buenazo 😇" : "papelón de villano 😈"}
+          </p>
+        </div>
+      )}
+
       {/* Escenario: fotograma con perforaciones de película */}
       <div className="stage">
         <div className="sprockets">
@@ -207,13 +247,19 @@ export default function CameraCapture() {
 
       {error && <p className="error-note" style={{ marginTop: 18 }}>{error}</p>}
 
-      <button
-        className="act-btn"
-        onClick={startCountdown}
-        disabled={busy || phase === "error"}
-      >
-        {phase === "done" ? "¡Otra función!" : busy ? "En escena…" : "¡Acción!"}
-      </button>
+      {phase === "error" ? (
+        <button className="act-btn" onClick={onPlayAgain}>
+          Volver a la baraja
+        </button>
+      ) : phase === "done" ? (
+        <button className="act-btn" onClick={onPlayAgain}>
+          Robar otra carta
+        </button>
+      ) : (
+        <button className="act-btn" disabled>
+          {phase === "recording" ? "¡Rodando!" : phase === "countdown" ? "En escena…" : "Encendiendo focos…"}
+        </button>
+      )}
 
       {/* Resultado de la IA como intertítulo */}
       {phase === "done" && aiPhase === "loading" && (
