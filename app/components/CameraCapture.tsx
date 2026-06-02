@@ -356,6 +356,7 @@ export default function CameraCapture() {
             src={clipUrl}
             controls
             playsInline
+            onLoadedMetadata={fixWebmDuration}
             style={{ width: "100%", borderRadius: 16, background: "#000" }}
           />
           <a
@@ -382,6 +383,20 @@ export default function CameraCapture() {
       `}</style>
     </div>
   );
+}
+
+// MediaRecorder genera WebM sin la metadata de duración, así que el reproductor
+// muestra una duración incorrecta. Forzamos un "seek" al final para que el navegador
+// recalcule la duración real y luego volvemos al inicio.
+function fixWebmDuration(e: React.SyntheticEvent<HTMLVideoElement>) {
+  const video = e.currentTarget;
+  if (video.duration !== Infinity && !Number.isNaN(video.duration)) return;
+  const onUpdate = () => {
+    video.removeEventListener("timeupdate", onUpdate);
+    video.currentTime = 0;
+  };
+  video.addEventListener("timeupdate", onUpdate);
+  video.currentTime = 1e101; // el navegador lo limita al final real del clip
 }
 
 const retryBtn: React.CSSProperties = {
