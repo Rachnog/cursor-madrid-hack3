@@ -1,0 +1,164 @@
+/* Bottom-anchored card-fan. Cards share one pivot near the bottom (the "hand")
+   and fan by rotating around their own bottom edge. The chosen card grows
+   upward from that point, so the deck is always bottom-aligned and fits. */
+
+.root {
+  --card-w: 130px;
+  --card-ratio: 1.6; /* card height / width — tall, to match vertical posters */
+  --card-h: calc(var(--card-w) * var(--card-ratio));
+  --hero: 1.55; /* JS overrides so the revealed card fills the height */
+  --gold: #f3dd92;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  background: radial-gradient(140% 100% at 50% 12%, #c11f1f 0%, #6f0b0b 58%, #420606 100%);
+  border-radius: 16px;
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.title {
+  margin: 14px 0 0;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+.subtitle {
+  margin: 4px 0 0;
+  min-height: 1.2em;
+  font-size: clamp(0.78rem, 2.6vw, 0.95rem);
+  opacity: 0.85;
+  z-index: 2;
+}
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  perspective: 1500px;
+}
+
+/* one card */
+.card {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin-left: calc(var(--card-w) / -2);
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transform-origin: 50% 100%; /* pivot = bottom-centre */
+  transform: rotate(var(--angle));
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.45s ease;
+  will-change: transform;
+}
+/* preselect: smooth lift along the card's own axis */
+.fan .card:hover,
+.fan .card:focus-visible {
+  transform: rotate(var(--angle)) translateY(-42px) scale(1.06);
+  z-index: 50;
+}
+/* the chosen card: upright, grown upward from the hand */
+.card.selected {
+  transform: rotate(0deg) translateY(-8px) scale(var(--hero));
+  z-index: 100;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* the rest cascade away */
+.revealed .card:not(.selected) {
+  transform: rotate(calc(var(--angle) * 1.25)) translateY(280px) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+.card.selected .flipper {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 26px rgba(0, 0, 0, 0.5);
+}
+.back {
+  background: #7c1010 center / cover no-repeat;
+  border: 5px solid #fff;
+}
+.front {
+  transform: rotateY(180deg);
+  background: #fff;
+  border: 5px solid #fff;
+}
+.front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 9px;
+  display: block;
+}
+.card.selected .front {
+  box-shadow: 0 0 0 2px var(--gold), 0 0 40px 10px rgba(243, 221, 146, 0.7),
+    0 22px 46px rgba(0, 0, 0, 0.6);
+}
+
+.controls {
+  flex-shrink: 0;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.reset {
+  appearance: none;
+  border: 1px solid var(--gold);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.15s;
+}
+.reset:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .flipper,
+  .reset {
+    transition: none;
+  }
+}

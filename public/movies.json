@@ -1,0 +1,25 @@
+{
+  "cardBack": "./assets/web/card-back.jpg",
+  "movies": [
+    { "id": 1,  "slug": "la-casa-de-papel",   "title": "La Casa de Papel",      "image": "./assets/web/movie-1.jpg",          "sentiment": "negative", "description": "A criminal mastermind leads an audacious heist on the Royal Mint of Spain." },
+    { "id": 2,  "slug": "wall-street",         "title": "Wall Street",           "image": "./assets/web/movie-2.jpg",          "sentiment": "negative", "description": "Greed, ambition and insider trading in the cutthroat world of 1980s high finance." },
+    { "id": 3,  "slug": "la-confidential",     "title": "L.A. Confidential",     "image": "./assets/web/movie-3.jpg",          "sentiment": "negative", "description": "Corruption and murder simmer beneath the glamour of 1950s Los Angeles." },
+    { "id": 4,  "slug": "city-of-god",         "title": "City of God",           "image": "./assets/web/movie-4.jpg",          "sentiment": "negative", "description": "Two boys take divergent paths amid escalating gang violence in Rio's favelas." },
+    { "id": 5,  "slug": "catch-me-if-you-can", "title": "Catch Me If You Can",   "image": "./assets/web/movie-5.jpg",          "sentiment": "negative", "description": "A charming young con artist forges his way across the globe, chased by the FBI." },
+    { "id": 6,  "slug": "oceans-eleven",       "title": "Ocean's Eleven",        "image": "./assets/web/movie-6.jpg",          "sentiment": "negative", "description": "Eleven con men plot to rob three Las Vegas casinos in a single night." },
+    { "id": 7,  "slug": "the-italian-job",     "title": "The Italian Job",       "image": "./assets/web/movie-7.jpg",          "sentiment": "negative", "description": "A daring gold heist and a Mini Cooper getaway through the streets of Italy." },
+    { "id": 8,  "slug": "the-untouchables",    "title": "The Untouchables",      "image": "./assets/web/movie-8.jpg",          "sentiment": "negative", "description": "Lawmen wage war on Al Capone's bootlegging empire in Prohibition-era Chicago." },
+    { "id": 9,  "slug": "the-irishman",        "title": "The Irishman",          "image": "./assets/web/movie-9.jpg",          "sentiment": "negative", "description": "An aging hitman reflects on decades of mob loyalty, violence and betrayal." },
+    { "id": 10, "slug": "lupin",               "title": "Lupin",                 "image": "./assets/web/movie-10.jpg",         "sentiment": "negative", "description": "A gentleman thief plots elaborate, elegant heists to avenge his father." },
+    { "id": 11, "slug": "amelie",              "title": "Amélie",                "image": "./assets/web/amelie.jpg",           "sentiment": "positive", "description": "A whimsical Parisian waitress quietly orchestrates small moments of joy for others." },
+    { "id": 12, "slug": "barbie",              "title": "Barbie",                "image": "./assets/web/barbie.jpg",           "sentiment": "positive", "description": "A doll's journey into the real world becomes a colorful celebration of identity." },
+    { "id": 13, "slug": "forrest-gump",        "title": "Forrest Gump",          "image": "./assets/web/forrest-gump.jpg",     "sentiment": "positive", "description": "An earnest man stumbles through history with kindness, luck and a pure heart." },
+    { "id": 14, "slug": "frozen",              "title": "Frozen",                "image": "./assets/web/frozen.jpg",           "sentiment": "positive", "description": "A fearless princess braves an eternal winter, powered by sisterly love." },
+    { "id": 15, "slug": "la-la-land",          "title": "La La Land",            "image": "./assets/web/la-la-land.jpg",       "sentiment": "positive", "description": "Two dreamers chase love and ambition through a song-filled Los Angeles." },
+    { "id": 16, "slug": "mary-poppins",        "title": "Mary Poppins",          "image": "./assets/web/mary-poppins.jpg",     "sentiment": "positive", "description": "A magical nanny brings wonder, song and warmth to a London family." },
+    { "id": 17, "slug": "paddington",          "title": "Paddington",            "image": "./assets/web/paddington.jpg",       "sentiment": "positive", "description": "A polite little bear spreads kindness across London, one marmalade sandwich at a time." },
+    { "id": 18, "slug": "the-sound-of-music",  "title": "The Sound of Music",    "image": "./assets/web/sound-of-music.jpg",   "sentiment": "positive", "description": "A spirited governess fills a family's home with music and hope." },
+    { "id": 19, "slug": "teletubbies",         "title": "Teletubbies",           "image": "./assets/web/teletubbies.jpg",      "sentiment": "positive", "description": "Four cheerful creatures play and giggle under a sunny, friendly sky." },
+    { "id": 20, "slug": "willy-wonka",         "title": "Willy Wonka",           "image": "./assets/web/willy-wonka.jpg",      "sentiment": "positive", "description": "A golden ticket opens the doors to a magical world of pure imagination." }
+  ]
+}
