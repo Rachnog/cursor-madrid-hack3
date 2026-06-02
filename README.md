@@ -112,13 +112,24 @@ git push -u origin feat/mi-componente
 
 ## 🚀 Puesta en marcha
 
-> Pendiente de scaffold del proyecto. Cuando exista, esta sección documentará:
->
-> ```bash
-> # instalar dependencias
-> # configurar variables de entorno (GEMINI_API_KEY, ...)
-> # arrancar en local
-> ```
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar la clave de Gemini (no se commitea: .env está en .gitignore)
+cp .env.example .env
+#   …y rellena GEMINI_API_KEY en .env  (https://aistudio.google.com/apikey)
+
+# 3. Arrancar en local
+npm run dev
+```
+
+- App del juego (captura de cámara): http://localhost:3000
+- Banco de pruebas de IA (reconocedor de vídeo multi-turno): http://localhost:3000/recognize
+
+> **Prueba headless del multi-turno** (con el server arrancado): graba/consigue un clip y lanza
+> `node scripts/smoke.mjs ruta/al/clip.webm` — hace 2 turnos en la misma sesión para verificar que
+> la conversación continúa.
 
 ---
 
