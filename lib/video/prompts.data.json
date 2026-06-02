@@ -1,0 +1,44 @@
+[
+  {
+    "id": "p01",
+    "prompt": "Cinematic wide shot: a giant T-rex dinosaur roaring in a misty prehistoric jungle clearing, ferns trembling, dramatic morning light, photorealistic, 8s.",
+    "answer": "Un dinosaurio",
+    "accept": ["dinosaurio", "dinosaurios", "dino", "trex", "t-rex", "tiranosaurio", "dinosaur"],
+    "clip": ""
+  },
+  {
+    "id": "p02",
+    "prompt": "An astronaut in a white suit floating weightless in space next to a spaceship, the blue Earth glowing in the background, stars, cinematic, photorealistic, 8s.",
+    "answer": "Un astronauta",
+    "accept": ["astronauta", "astronautas", "cosmonauta", "espacio", "astronaut", "espacial"],
+    "clip": ""
+  },
+  {
+    "id": "p03",
+    "prompt": "A red sports car speeding along a winding coastal highway at golden-hour sunset, ocean on one side, motion blur, cinematic car commercial, 8s.",
+    "answer": "Un coche de carreras",
+    "accept": ["coche", "coches", "coche de carreras", "auto", "carro", "automovil", "car", "coche rojo"],
+    "clip": ""
+  },
+  {
+    "id": "p04",
+    "prompt": "A chef in a busy restaurant kitchen tossing and spinning pizza dough in the air, flour dust floating, warm lighting, slow motion, cinematic, 8s.",
+    "answer": "Un cocinero haciendo pizza",
+    "accept": ["cocinero", "chef", "pizza", "pizzero", "cocina", "cook", "cocinar"],
+    "clip": ""
+  },
+  {
+    "id": "p05",
+    "prompt": "A surfer riding the inside of a huge breaking ocean wave (a barrel), spray flying, bright daylight, dynamic sports cinematography, 8s.",
+    "answer": "Un surfista",
+    "accept": ["surfista", "surf", "surfear", "surfero", "ola", "surfer", "surfing", "tabla"],
+    "clip": ""
+  },
+  {
+    "id": "p06",
+    "prompt": "A wizard in a dark stone castle casting a glowing blue magic spell from his hands, swirling sparks and embers, mystical atmosphere, cinematic fantasy, 8s.",
+    "answer": "Un mago lanzando un hechizo",
+    "accept": ["mago", "magos", "hechicero", "brujo", "magia", "hechizo", "wizard", "fantasia"],
+    "clip": ""
+  }
+]
