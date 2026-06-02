@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { CARD_BACK, MOVIES, type Movie } from "../data/movies";
 import styles from "./CardDeck.module.css";
 
@@ -45,8 +45,14 @@ export default function CardDeck({ onPick, onContinue }: CardDeckProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  // order[i] = which movie sits in fan slot i (reshuffled each deal)
-  const order = useMemo(() => shuffledOrder(), [deck]);
+  // order[i] = which movie sits in fan slot i (reshuffled each deal).
+  // Empieza en orden determinista (identidad) para que SSR y cliente coincidan;
+  // se baraja SOLO en el cliente tras montar (las cartas están boca abajo, así
+  // que el reorden es invisible y no rompe la hidratación).
+  const [order, setOrder] = useState<number[]>(() => MOVIES.map((_, i) => i));
+  useEffect(() => {
+    setOrder(shuffledOrder());
+  }, [deck]);
   const drawn = selected != null ? MOVIES[order[selected]] : null;
 
   // Keep cards sized to the stage so the revealed card always fits.

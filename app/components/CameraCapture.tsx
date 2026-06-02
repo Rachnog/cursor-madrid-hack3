@@ -148,15 +148,17 @@ export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps
     setPhase("recording");
     setCount(RECORD_SECONDS);
 
+    // El tick lleva los efectos (parar el recorder) FUERA del updater de setState:
+    // en Strict Mode los updaters se invocan dos veces, así que un efecto dentro
+    // se ejecutaría por duplicado (causa de la doble grabación → doble llamada IA).
+    let remaining = RECORD_SECONDS;
     const interval = setInterval(() => {
-      setCount((c) => {
-        if (c <= 1) {
-          clearInterval(interval);
-          if (recorder.state !== "inactive") recorder.stop();
-          return 0;
-        }
-        return c - 1;
-      });
+      remaining -= 1;
+      setCount(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        if (recorder.state !== "inactive") recorder.stop();
+      }
     }, 1000);
     timersRef.current.push(interval);
   }, [sendToGemini]);
@@ -172,15 +174,18 @@ export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps
     setPhase("countdown");
     setCount(PREP_SECONDS);
 
+    // Mismo motivo que en startRecording: el efecto (arrancar la grabación) va
+    // FUERA del updater de setState. Si no, Strict Mode lo invoca dos veces y se
+    // crean dos MediaRecorder sobre el mismo stream/chunks → clip truncado (~2s)
+    // y doble llamada a Gemini.
+    let remaining = PREP_SECONDS;
     const interval = setInterval(() => {
-      setCount((c) => {
-        if (c <= 1) {
-          clearInterval(interval);
-          startRecording();
-          return 0;
-        }
-        return c - 1;
-      });
+      remaining -= 1;
+      setCount(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        startRecording();
+      }
     }, 1000);
     timersRef.current.push(interval);
   }, [startRecording]);

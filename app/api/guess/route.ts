@@ -85,8 +85,9 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("Error llamando a Gemini:", err);
+    const detail = err instanceof Error ? err.message : String(err);
     return Response.json(
-      { error: "Error procesando el vídeo con Gemini." },
+      { error: `Error procesando el vídeo con Gemini: ${detail}` },
       { status: 502 }
     );
   }
