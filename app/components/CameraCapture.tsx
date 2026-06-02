@@ -338,36 +338,6 @@ export default function CameraCapture({ movie, onPlayAgain }: CameraCaptureProps
         </div>
       )}
 
-      {/* Clip grabado */}
-      {phase === "done" && clipUrl && (
-        <div className="clip">
-          <video
-            src={clipUrl}
-            controls
-            playsInline
-            onLoadedMetadata={fixWebmDuration}
-          />
-          <div>
-            <a className="download" href={clipUrl} download="charades-clip.webm">
-              ⬇ Descargar la cinta (.webm)
-            </a>
-          </div>
-        </div>
-      )}
     </div>
   );
-}
-
-// MediaRecorder genera WebM sin la metadata de duración, así que el reproductor
-// muestra una duración incorrecta. Forzamos un "seek" al final para que el navegador
-// recalcule la duración real y luego volvemos al inicio.
-function fixWebmDuration(e: React.SyntheticEvent<HTMLVideoElement>) {
-  const video = e.currentTarget;
-  if (video.duration !== Infinity && !Number.isNaN(video.duration)) return;
-  const onUpdate = () => {
-    video.removeEventListener("timeupdate", onUpdate);
-    video.currentTime = 0;
-  };
-  video.addEventListener("timeupdate", onUpdate);
-  video.currentTime = 1e101; // el navegador lo limita al final real del clip
 }
