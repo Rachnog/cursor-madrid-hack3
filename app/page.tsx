@@ -2,19 +2,24 @@ import CameraCapture from "./components/CameraCapture";
 
 export default function Home() {
   return (
-    <main
-      style={{
-        maxWidth: 720,
-        margin: "0 auto",
-        padding: "48px 20px",
-        textAlign: "center",
-      }}
-    >
-      <h1 style={{ fontSize: 36, marginBottom: 8 }}>🎭 AI Charades</h1>
-      <p style={{ color: "var(--muted)", marginBottom: 32 }}>
-        Cuenta atrás de 5s, graba 10s de mímica y descarga tu clip.
-      </p>
-      <CameraCapture />
+    <main className="stage-wrap">
+      <div className="playbill">
+        <header className="masthead">
+          <p className="kicker">Cursor Madrid · Hack III presenta</p>
+          <div className="deco-rule">
+            <span>★</span>
+          </div>
+          <h1 className="title">AI Charades</h1>
+          <div className="bulbs">
+            <i /><i /><i /><i /><i /><i />
+          </div>
+          <p className="subtitle">Una película muda en un acto</p>
+        </header>
+
+        <CameraCapture />
+      </div>
+
+      <p className="colophon">Mímica · Cámara · Aplauso</p>
     </main>
   );
 }

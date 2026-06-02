@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const PREP_SECONDS = 5; // cuenta atrás de preparación
+const PREP_SECONDS = 5; // cuenta atrás de preparación (film leader)
 const RECORD_SECONDS = 10; // duración de la grabación
 
 type Phase = "idle" | "countdown" | "recording" | "done" | "error";
@@ -116,13 +116,11 @@ export default function CameraCapture() {
     };
     recorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "video/webm" });
-      // Libera el clip anterior si existía.
       setClipUrl((prev) => {
         if (prev) URL.revokeObjectURL(prev);
         return URL.createObjectURL(blob);
       });
       setPhase("done");
-      // Manda automáticamente el clip a la IA.
       void sendToGemini(blob);
     };
 
@@ -144,7 +142,6 @@ export default function CameraCapture() {
   }, [sendToGemini]);
 
   const startCountdown = useCallback(() => {
-    // Limpia un clip y resultado previos.
     setClipUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
@@ -172,215 +169,119 @@ export default function CameraCapture() {
 
   return (
     <div>
-      <div
-        style={{
-          position: "relative",
-          background: "var(--panel)",
-          borderRadius: 16,
-          overflow: "hidden",
-          aspectRatio: "16 / 9",
-          boxShadow: "0 8px 40px rgba(0,0,0,0.4)",
-        }}
-      >
-        <video
-          ref={liveVideoRef}
-          autoPlay
-          muted
-          playsInline
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            transform: "scaleX(-1)", // efecto espejo, más natural
-          }}
-        />
+      {/* Escenario: fotograma con perforaciones de película */}
+      <div className="stage">
+        <div className="sprockets">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <i key={i} />
+          ))}
+        </div>
 
-        {/* Overlay de cuenta atrás / grabación */}
-        {phase === "countdown" && (
-          <Overlay>
-            <div style={{ fontSize: 18, color: "var(--muted)" }}>Prepárate…</div>
-            <div style={{ fontSize: 120, fontWeight: 800, lineHeight: 1 }}>
-              {count}
+        <div className="viewport">
+          <video ref={liveVideoRef} className="video-live" autoPlay muted playsInline />
+
+          {phase === "countdown" && (
+            <div className="overlay">
+              <div className="leader">
+                <div className="leader-sweep" />
+                <div className="leader-num">{count}</div>
+              </div>
+              <div className="overlay-label">Prepárate</div>
             </div>
-          </Overlay>
-        )}
-        {phase === "recording" && (
-          <div
-            style={{
-              position: "absolute",
-              top: 16,
-              left: 16,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              background: "rgba(0,0,0,0.55)",
-              padding: "8px 14px",
-              borderRadius: 999,
-              fontWeight: 700,
-            }}
-          >
-            <span
-              style={{
-                width: 12,
-                height: 12,
-                borderRadius: "50%",
-                background: "var(--accent-2)",
-                animation: "pulse 1s infinite",
-              }}
-            />
-            REC · {count}s
-          </div>
-        )}
+          )}
+
+          {phase === "recording" && (
+            <div className="rolling">
+              <span className="dot" />
+              RODANDO · {count}s
+            </div>
+          )}
+        </div>
+
+        <div className="sprockets">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <i key={i} />
+          ))}
+        </div>
       </div>
 
-      {error && (
-        <p style={{ color: "var(--accent-2)", marginTop: 16 }}>{error}</p>
+      {error && <p className="error-note" style={{ marginTop: 18 }}>{error}</p>}
+
+      <button
+        className="act-btn"
+        onClick={startCountdown}
+        disabled={busy || phase === "error"}
+      >
+        {phase === "done" ? "¡Otra función!" : busy ? "En escena…" : "¡Acción!"}
+      </button>
+
+      {/* Resultado de la IA como intertítulo */}
+      {phase === "done" && aiPhase === "loading" && (
+        <div className="thinking">
+          <div className="reel" />
+          <span>
+            El público observa
+            <span className="thinking-dots" />
+          </span>
+        </div>
       )}
 
-      <div style={{ marginTop: 24 }}>
-        <button
-          onClick={startCountdown}
-          disabled={busy || phase === "error"}
-          style={{
-            background: busy
-              ? "var(--muted)"
-              : "linear-gradient(90deg, var(--accent), var(--accent-2))",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            padding: "14px 32px",
-            fontSize: 18,
-            fontWeight: 700,
-            opacity: busy ? 0.6 : 1,
-          }}
-        >
-          {phase === "done"
-            ? "🔁 Jugar otra vez"
-            : busy
-            ? "Grabando…"
-            : "🎬 Empezar"}
-        </button>
-      </div>
+      {phase === "done" && aiPhase === "error" && (
+        <div className="intertitle">
+          <p className="intertitle-lead">Se fundió la película</p>
+          <p className="error-note">⚠ {aiError}</p>
+          <button
+            className="act-btn"
+            style={{ marginTop: 24 }}
+            onClick={() => {
+              void (async () => {
+                const res = await fetch(clipUrl!);
+                const blob = await res.blob();
+                void sendToGemini(blob);
+              })();
+            }}
+          >
+            Rebobinar
+          </button>
+        </div>
+      )}
 
-      {/* Resultado de la IA */}
-      {phase === "done" && (
-        <div style={{ marginTop: 32 }}>
-          {aiPhase === "loading" && (
-            <div style={{ color: "var(--muted)", fontSize: 18 }}>
-              🤖 La IA está pensando…
-            </div>
+      {phase === "done" && aiPhase === "done" && result && result.guesses.length > 0 && (
+        <div className="intertitle">
+          <p className="intertitle-lead">El público cree que has actuado…</p>
+          <div className="guess-main">«{result.guesses[0]}»</div>
+
+          {result.guesses.length > 1 && (
+            <>
+              <p className="guess-or">…o quizá fuese:</p>
+              {result.guesses.slice(1).map((g, i) => (
+                <p key={i} className="guess-alt">{g}</p>
+              ))}
+            </>
           )}
 
-          {aiPhase === "error" && (
-            <div style={{ color: "var(--accent-2)" }}>
-              ⚠️ {aiError}
-              <div style={{ marginTop: 12 }}>
-                <button
-                  onClick={() => {
-                    void (async () => {
-                      const res = await fetch(clipUrl!);
-                      const blob = await res.blob();
-                      void sendToGemini(blob);
-                    })();
-                  }}
-                  style={retryBtn}
-                >
-                  Reintentar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {aiPhase === "done" && result && (
-            <div
-              style={{
-                background: "var(--panel)",
-                borderRadius: 16,
-                padding: 24,
-                textAlign: "left",
-              }}
-            >
-              <h2 style={{ fontSize: 20, marginBottom: 16 }}>
-                🤖 La IA cree que es…
-              </h2>
-              <ol style={{ paddingLeft: 0, listStyle: "none" }}>
-                {result.guesses.map((g, i) => (
-                  <li
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      padding: "10px 0",
-                      borderBottom:
-                        i < result.guesses.length - 1
-                          ? "1px solid rgba(255,255,255,0.08)"
-                          : "none",
-                      fontSize: i === 0 ? 22 : 18,
-                      fontWeight: i === 0 ? 700 : 500,
-                    }}
-                  >
-                    <span
-                      style={{
-                        opacity: 0.5,
-                        fontVariantNumeric: "tabular-nums",
-                      }}
-                    >
-                      {i + 1}.
-                    </span>
-                    {g}
-                  </li>
-                ))}
-              </ol>
-              {result.reasoning && (
-                <p
-                  style={{
-                    marginTop: 16,
-                    color: "var(--muted)",
-                    fontStyle: "italic",
-                    fontSize: 14,
-                  }}
-                >
-                  💭 {result.reasoning}
-                </p>
-              )}
-            </div>
+          {result.reasoning && (
+            <p className="director-note">— Nota del director: {result.reasoning}</p>
           )}
         </div>
       )}
 
-      {/* Reproductor + descarga del clip */}
+      {/* Clip grabado */}
       {phase === "done" && clipUrl && (
-        <div style={{ marginTop: 24 }}>
+        <div className="clip">
           <video
             src={clipUrl}
             controls
             playsInline
             onLoadedMetadata={fixWebmDuration}
-            style={{ width: "100%", borderRadius: 16, background: "#000" }}
           />
-          <a
-            href={clipUrl}
-            download="charades-clip.webm"
-            style={{
-              display: "inline-block",
-              marginTop: 12,
-              color: "var(--accent)",
-              fontWeight: 700,
-              textDecoration: "none",
-            }}
-          >
-            ⬇️ Descargar clip (.webm)
-          </a>
+          <div>
+            <a className="download" href={clipUrl} download="charades-clip.webm">
+              ⬇ Descargar la cinta (.webm)
+            </a>
+          </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
-        }
-      `}</style>
     </div>
   );
 }
@@ -397,33 +298,4 @@ function fixWebmDuration(e: React.SyntheticEvent<HTMLVideoElement>) {
   };
   video.addEventListener("timeupdate", onUpdate);
   video.currentTime = 1e101; // el navegador lo limita al final real del clip
-}
-
-const retryBtn: React.CSSProperties = {
-  background: "var(--accent)",
-  color: "#fff",
-  border: "none",
-  borderRadius: 999,
-  padding: "8px 20px",
-  fontWeight: 700,
-};
-
-function Overlay({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        background: "rgba(0,0,0,0.45)",
-        textShadow: "0 2px 12px rgba(0,0,0,0.6)",
-      }}
-    >
-      {children}
-    </div>
-  );
 }
