@@ -1,6 +1,24 @@
 # Spec — Integración IA / Gemini (reconocimiento por vídeo, multi-turno)
 
-> **Owner:** Alex · **Rama:** `feat/gemini-integration` · **Estado:** En revisión
+> **Owner:** Alex · **Rama:** `feat/gemini-integration` · **Estado:** v1 (`/api/guess`) implementada · multi-turno (`/api/recognize`) en revisión
+
+## ✅ Implementación v1 (vídeo completo, no frames) — `/api/guess`
+
+Decisión tomada: en vez de muestrear frames, se envía el **clip de vídeo completo**
+(`.webm`) inline (base64) a Gemini. Un clip de 10s pesa pocos MB, muy por debajo del
+límite de ~100MB por request, así que es más simple y conserva el movimiento.
+
+- **SDK:** `@google/genai` v2.x · `new GoogleGenAI({ apiKey })`.
+- **Modelo:** `gemini-2.5-flash` (override con env `GEMINI_MODEL`).
+- **Endpoint:** `POST /api/guess` — recibe `FormData` con campo `video` (Blob webm),
+  devuelve `{ guesses: string[3], reasoning: string, model: string }`.
+- **Salida estructurada:** `responseMimeType: application/json` + `responseSchema`.
+- La `GEMINI_API_KEY` vive en `.env` (server-side, nunca llega al navegador).
+
+> **Evolución (v2, multi-turno):** la spec de abajo describe `POST /api/recognize`, una
+> versión **conversacional / multi-turno** que extiende este v1. Tras el merge **ambos
+> endpoints coexisten** en el código (`app/api/guess` y `app/api/recognize`); queda
+> **pendiente decidir** cuál es el contrato final con 01 (consume el resultado) y 04 (matching).
 
 ## 1. Objetivo
 Recibir el **clip de vídeo** de la actuación del jugador, enviarlo a **Gemini** (modelo

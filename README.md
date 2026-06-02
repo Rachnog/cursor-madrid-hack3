@@ -124,8 +124,10 @@ cp .env.example .env
 npm run dev
 ```
 
-- App del juego (captura de cámara): http://localhost:3000
-- Banco de pruebas de IA (reconocedor de vídeo multi-turno): http://localhost:3000/recognize
+- **App del juego** (captura de cámara): http://localhost:3000 — ábrela en Chrome y da permiso de
+  cámara. Flujo actual: cuenta atrás 5s → graba 10s → el clip se envía a `/api/guess` (Gemini procesa
+  el vídeo) → la IA devuelve sus 3 mejores apuestas de película.
+- **Banco de pruebas de IA** (reconocedor de vídeo multi-turno): http://localhost:3000/recognize
 
 > **Prueba headless del multi-turno** (con el server arrancado): graba/consigue un clip y lanza
 > `node scripts/smoke.mjs ruta/al/clip.webm` — hace 2 turnos en la misma sesión para verificar que
